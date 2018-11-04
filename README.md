@@ -1,4 +1,6 @@
 # Mocha bundle UI
+[![npm version](https://badge.fury.io/js/mocha-bundle-ui.svg)](https://badge.fury.io/js/mocha-bundle-ui)
+
 Add bundle to the default Mocha BDD UI. Bundle allows you to bundle tests across files with a shared before and after script.
 
 Fully supports BDD default behaviour including `.skip` and `.only`.
