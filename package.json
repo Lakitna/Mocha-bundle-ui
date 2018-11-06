@@ -4,8 +4,8 @@
   "description": "Mocha BDD ui extended with bundle",
   "main": "mocha-bundle-ui.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Lakitna/Mocha-bundle-ui"
+    "type": "git",
+    "url": "https://github.com/Lakitna/Mocha-bundle-ui"
   },
   "scripts": {
     "test": "mocha"
