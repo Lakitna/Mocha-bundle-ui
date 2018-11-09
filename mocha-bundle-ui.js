@@ -30,11 +30,11 @@ Mocha.interfaces['mocha-bundle-ui'] = module.exports = bddBundleInterface;
  * @param {Suite} suite Root suite.
  */
 function bddBundleInterface(suite) {
-    let rootSuite = suite;
     let suites = [suite];
 
     let beforeEachBundleFunction = function(_, done) { done(); };
     let afterEachBundleFunction = function(_, done) { done(); };
+
 
     suite.on('pre-require', function(context, file, mocha) {
         let common = require('mocha/lib/interfaces/common')(suites, context, mocha);
@@ -52,9 +52,13 @@ function bddBundleInterface(suite) {
          * @param {function} fn - Callback function
          */
         context.bundle = function bundle(parameters, fn) {
+            let bundle = createBundle(parameters, fn);
+            let bundleContext = bundle.parent;
+            bundleContext.suites.pop();
+
             let foundExisting = false;
-            for (let i=0; i<rootSuite.suites.length; i++) {
-                let suite = rootSuite.suites[i];
+            for (let i=0; i < bundleContext.suites.length; i++) {
+                let suite = bundleContext.suites[i];
 
                 if (suite.params && utils.objectEquals(suite.params, parameters)) {
                     suites.unshift(suite);
@@ -67,7 +71,7 @@ function bddBundleInterface(suite) {
             }
 
             if (!foundExisting) {
-                return createBundle(parameters, fn);
+                bundleContext.suites.push(bundle);
             }
         };
 
