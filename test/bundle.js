@@ -1,26 +1,36 @@
 
 
-bundle({ alpha: 'base' }, function() {
+bundle({ nesting: 'base' }, function() {
     let bundleSuite = this;
 
-    describe("A bundle should be a child of the root suite", function() {
-        it("its parent is the root suite", function() {
+    describe("This bundle should be a child of the root suite", function() {
+        it("this.parent is the root suite", function() {
             expect(bundleSuite.parent.root).to.be.true;
         });
     });
 
-    bundle({ alpha: 'nestedOne' }, function() {
+    bundle({ nesting: 'One' }, function() {
         let bundleSuite = this;
 
         describe("A nested bundle should be a child of the first bundle", function() {
-            it('its parent is the bundle', function() {
+            it('this.parent is another bundle', function() {
                 expect(bundleSuite.parent.root).to.be.false;
-                expect(bundleSuite.parent.params).to.eql({ alpha: 'base' });
+                expect(bundleSuite.parent.params).to.eql({ nesting: 'base' });
             });
         });
     });
 
-    bundle({ alpha: 'nestedTwo' }, function() {
+    bundle({ nesting: 'One' }, function() {
+        let bundleSuite = this;
+
+        describe("A nested bundle with the same parameters should be combined into one", function() {
+            it('has more than one suite', function() {
+                expect(bundleSuite.suites.length).to.be.above(1);
+            });
+        });
+    });
+
+    bundle({ nesting: 'Two' }, function() {
         let bundleSuite = this;
 
         describe("A second nested bundle should be a sibling of the first nested bundle", function() {
@@ -29,11 +39,36 @@ bundle({ alpha: 'base' }, function() {
                     if (typeof bun.params !== 'undefined') {
                         expect(JSON.stringify(bun.params)).to.be.oneOf([
                             JSON.stringify(bundleSuite.params),
-                            JSON.stringify({ alpha: 'nestedOne' })
+                            JSON.stringify({ nesting: 'One' })
                         ]);
                     }
                 });
             });
+        });
+    });
+});
+
+
+
+describe("A random nesting level", function() {
+    bundle({ nesting: 'across levels' }, function() {
+        let bundleSuite = this;
+
+        describe("Multiple nested bundles with the same parameters on different nesting level", function() {
+            it('hasn\'t bundles with a bundle on another nesting level', function() {
+                expect(bundleSuite.suites.length).to.be.equal(1);
+            });
+        });
+    });
+});
+
+
+bundle({ nesting: 'across levels' }, function() {
+    let bundleSuite = this;
+
+    describe("Multiple nested bundles with the same parameters on different nesting level", function() {
+        it('hasn\'t bundles with a bundle on another nesting level', function() {
+            expect(bundleSuite.suites.length).to.be.equal(1);
         });
     });
 });
