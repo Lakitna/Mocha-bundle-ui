@@ -27,7 +27,7 @@ As with everything there are limits, below are the ones identified at this point
 * There are no default bundle values.
 * Bundles themselves don't support `.skip` and `.only`, but its contents do.
 * `bundle.beforeEach` and `bundle.afterEach` only work with Mocha async (requires `done()` to be called).
-* `bundle` can only be used in combination with the basic `BDD` UI.
+* `bundle` can only be used in combination with the default `BDD` UI.
 
 ## Installation
 
