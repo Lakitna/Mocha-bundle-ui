@@ -2,7 +2,7 @@
   "name": "mocha-bundle-ui",
   "version": "1.1.0",
   "description": "Mocha BDD ui extended with bundle",
-  "main": "mocha-bundle-ui.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Lakitna/Mocha-bundle-ui"
