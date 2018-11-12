@@ -15,7 +15,8 @@
     "ui",
     "bundle",
     "combine",
-    "BDD"
+    "BDD",
+    "TDD"
   ],
   "author": "Sander van Beek",
   "license": "MIT",

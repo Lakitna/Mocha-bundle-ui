@@ -1,4 +1,4 @@
 -r chai/register-expect
 -r ./index.js
---ui bundle-BDD
+--ui BDD-bundle
 --recursive
