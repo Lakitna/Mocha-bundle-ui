@@ -8,7 +8,7 @@
     "url": "https://github.com/Lakitna/Mocha-bundle-ui"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "nyc --reporter=html --reporter=text-summary mocha"
   },
   "keywords": [
     "mocha",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^4.1.0"
+    "mocha": "^4.1.0",
+    "nyc": "^13.1.0"
   }
 }
