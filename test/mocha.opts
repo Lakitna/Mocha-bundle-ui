@@ -1,4 +1,0 @@
--r chai/register-expect
--r ./index.js
---ui BDD-bundle
---recursive

@@ -1,4 +1,4 @@
-let utils = require("./../include/utils");
+let utils = require("../../include/utils");
 
 
 describe("Utility functions", function () {

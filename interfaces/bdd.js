@@ -7,7 +7,7 @@
 var Test = require('mocha/lib/test');
 
 /**
- * BDD-style interface:
+ * BDD-bundle interface:
  *
  *    bundle({foo: 'bar'}, function() {
  *      describe('Array', function() {
