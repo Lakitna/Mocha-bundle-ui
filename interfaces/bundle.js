@@ -1,6 +1,10 @@
 const utils = require('../include/utils');
 
 
+let beforeEachBundleFunction = function(_, done) { done(); };
+let afterEachBundleFunction = function(_, done) { done(); };
+
+
 /**
  * Require and expose bundle UI elements
  * @param {Object} common
@@ -8,9 +12,6 @@ const utils = require('../include/utils');
  * @param {string} file
  */
 module.exports = function(common, suites, file) {
-    let beforeEachBundleFunction = function(_, done) { done(); };
-    let afterEachBundleFunction = function(_, done) { done(); };
-
     /**
      * Describe a "suite" with given `parameters` to bundle on
      * and a callback `fn` containing nested suites and/or tests.
