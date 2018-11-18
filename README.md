@@ -1,11 +1,10 @@
 # Mocha bundle UI
+[![GitHub license](https://img.shields.io/github/license/Lakitna/Mocha-bundle-ui.svg)](https://github.com/Lakitna/Mocha-bundle-ui/blob/master/LICENSE)
 [![npm version](https://badge.fury.io/js/mocha-bundle-ui.svg)](https://badge.fury.io/js/mocha-bundle-ui)
 
-Add `bundle` to the default Mocha BDD UI. `bundle` allows you to bundle tests across files with a before and after scripts that are executed for every bundle.
+Add `bundle` to [another UI](#supported-uis). `bundle` allows you to bundle tests across files with a before and after scripts that are executed for every bundle.
 
-This UI was originally made to use with E2E frontend testing frameworks that use Mocha. In this context the UI allows you to separate speed optimizations from your file structure resulting in more flexibility with a minimum runtime.
-
-Fully supports BDD default behaviour including `.skip` and `.only`.
+This UI was originally made to use with E2E frontend testing frameworks that use Mocha. In this context the UI allows you to _separate speed optimizations from your file structure_ resulting in more flexibility with a minimum runtime.
 
 ## Design choices
 
@@ -15,19 +14,17 @@ This is the main purpose of the UI. This allows you to separate technical arrang
 ### Bundles take an object to bundle on
 To enable bundling each bundle needs an id. By making this id into an object it can double as input for the `bundle.beforeEach` and `bundle.afterEach` functions. This allows you to customise the before and after scripts to suit each bundles contents.
 
-For maximum flexibility any object will do.
-
 ### Bundles only work within their nesting level
-Bundling on different nesting levels can be confusing and thus lead to accidental bundling. To keep things clean and clear bundling across nesting levels is not possible.
+Bundling on different nesting levels can be confusing and can thus lead to accidental bundling. To keep things clean and clear bundling across nesting levels is not possible.
 
 ## Limits
-As with everything there are limits, below are the ones identified at this point in time. If you need these limits removed, please feel free to add an issue or a pull request with the solution.
+As with everything there are limits, below are the ones identified right now that aren't because of a design choice. If you need any of these limits removed, please feel free to add an issue or a pull request with the solution.
 
-* You can only bundle on the same nesting level, see design choices for details.
 * There are no default bundle values.
 * Bundles themselves don't support `.skip` and `.only`, but its contents do.
-* `bundle.beforeEach` and `bundle.afterEach` only work with Mocha async (requires `done()` to be called).
-* `bundle` can only be used in combination with the default `BDD` UI.
+* Bundle setup and teardown functions only work with Mocha async (requires `done()` to be called).
+* `bundle` can only be used in combination with the [Supported UIs](#supported-uis)
+
 
 ## Installation
 
@@ -38,18 +35,78 @@ npm install mocha-bundle-ui
 Then specify the UI by calling mocha with the `--ui` flag
 
 ```shell
-mocha --ui mocha-bundle-ui
+mocha --ui BDD-bundle
 ```
 
 Or add the following line to `mocha.opts`
 
 ```shell
---ui mocha-bundle-ui
+--ui BDD-bundle
+```
+
+
+## Supported UIs
+Mocha bundle UI is an extention of existing UIs. The following are supported at this point.
+
+Note on adding a UI: Extending an existing UI is actually pretty easy in most cases, but it sadly requires the UI to be copied into the Mocha bundle UI repo. If you want to use `bundle` in an unsupported UI please add an issue or make a pull request.
+
+### [Mocha BDD](https://mochajs.org/#bdd)
+The Mocha default UI. This UI is fully supported.
+
+```
+--ui BDD-bundle
+```
+
+```javascript
+bundle.beforeEach(function(parameters, done) {
+    // Do some setup using the parameters as input
+    done();
+});
+
+bundle.afterEach(function(parameters, done) {
+    // Do some teardown using the parameters as input
+    done();
+});
+
+bundle({ foo: 'bar' }, function() {
+    describe('An amazing test description', function() {
+        it('is amazing', function() {
+            // ...
+        });
+    });
+});
+```
+
+### [Mocha TDD](https://mochajs.org/#tdd)
+Another popular Mocha UI. This UI is fully supported.
+
+```
+--ui TDD-bundle
+```
+
+```javascript
+bundle.setup(function(parameters, done) {
+    // Do some setup using the parameters as input
+    done();
+});
+
+bundle.teardown(function(parameters, done) {
+    // Do some teardown using the parameters as input
+    done();
+});
+
+bundle({ foo: 'bar' }, function() {
+    suite('An amazing test description', function() {
+        test('is amazing', function() {
+            // ...
+        });
+    });
+});
 ```
 
 
 ## Examples
-Below are some basic examples of using `bundle` in combination with the default `BDD` UI.
+Below are some basic examples of using `bundle` using the `BDD-bundle` UI.
 
 ### Minimal
 ```javascript
@@ -62,7 +119,7 @@ bundle({ foo: 'bar' }, function() {
 });
 ```
 
-Results in:
+Result:
 
 ```
   Bundle with parameters: foo = bar
@@ -91,7 +148,7 @@ bundle({ foo: 'bar' }, function() {
 });
 ```
 
-Results in:
+Result:
 
 ```
   Bundle with parameters: foo = bar
@@ -132,7 +189,7 @@ bundle({ foo: 'bar' }, function() {
 });
 ```
 
-Results in:
+Result:
 
 ```
   Bundle with parameters: foo = bar
