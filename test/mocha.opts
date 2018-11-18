@@ -1,4 +1,0 @@
--r chai/register-expect
--r ./mocha-bundle-ui.js
---ui mocha-bundle-ui
---recursive

@@ -1,21 +1,22 @@
 {
   "name": "mocha-bundle-ui",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Mocha BDD ui extended with bundle",
-  "main": "mocha-bundle-ui.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Lakitna/Mocha-bundle-ui"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "nyc --reporter=html --reporter=text-summary node ./test/index.js && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "mocha",
     "ui",
     "bundle",
     "combine",
-    "BDD"
+    "BDD",
+    "TDD"
   ],
   "author": "Sander van Beek",
   "license": "MIT",
@@ -24,6 +25,9 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^4.1.0"
+    "coveralls": "^3.0.2",
+    "mocha": "^4.1.0",
+    "nyc": "^13.1.0",
+    "recursive-readdir": "^2.2.2"
   }
 }
