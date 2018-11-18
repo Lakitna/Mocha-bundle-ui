@@ -1,7 +1,9 @@
+/**
+ * @fileoverview Run Mocha multiple times with different UI's in different folders
+ */
+
 var Mocha = require('mocha');
 var readDir = require('recursive-readdir');
-var fs = require('fs');
-var path = require('path');
 
 global.expect = require("chai").expect;
 
@@ -44,6 +46,7 @@ function mochaInstance(rootDir, mochaOpts) {
 
 /**
  * Run tests
+ * @async
  */
 async function run() {
     await mochaInstance('./test/bdd', {
