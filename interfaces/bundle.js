@@ -1,7 +1,8 @@
 const utils = require('../include/utils');
 
-
+/* istanbul ignore next: Empty function doesn't need test */
 let beforeEachBundleFunction = function(_, done) { done(); };
+/* istanbul ignore next: Empty function doesn't need test */
 let afterEachBundleFunction = function(_, done) { done(); };
 
 
@@ -11,7 +12,7 @@ let afterEachBundleFunction = function(_, done) { done(); };
  * @param {Array} suites
  * @param {string} file
  */
-module.exports = function(common, suites, file) {
+module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Describe a "suite" with given `parameters` to bundle on
      * and a callback `fn` containing nested suites and/or tests.
@@ -47,7 +48,7 @@ module.exports = function(common, suites, file) {
      * @param {object} parameters - Bundle parameters
      * @param {function} done - Mocha done()
      */
-    ret.beforeEach = function(fn) {
+    ret[setupFnName] = function(fn) {
         beforeEachBundleFunction = fn;
     }
 
@@ -56,7 +57,7 @@ module.exports = function(common, suites, file) {
      * @param {object} parameters - Bundle parameters
      * @param {function} done - Mocha done()
      */
-    ret.afterEach = function(fn) {
+    ret[teardownFnName] = function(fn) {
         afterEachBundleFunction = fn;
     };
 

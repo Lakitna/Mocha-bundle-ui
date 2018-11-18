@@ -37,7 +37,7 @@ module.exports = function (suite) {
     context.afterEach = common.afterEach;
     context.run = mocha.options.delay && common.runWithSuite(suite);
 
-    context.bundle = require("./bundle")(common, suites, file);
+    context.bundle = require("./bundle")(common, suites, file, 'beforeEach', 'afterEach');
 
     /**
      * Describe a "suite" with the given `title`

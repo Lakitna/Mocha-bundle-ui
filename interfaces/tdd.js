@@ -45,7 +45,7 @@ module.exports = function (suite) {
     context.suiteTeardown = common.after;
     context.run = mocha.options.delay && common.runWithSuite(suite);
 
-    context.bundle = require("./bundle")(common, suites, file);
+    context.bundle = require("./bundle")(common, suites, file, 'setup', 'teardown');
 
     /**
      * Describe a "suite" with the given `title` and callback `fn` containing
