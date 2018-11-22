@@ -3,6 +3,7 @@
 ![Node version](https://img.shields.io/badge/Node-%3E%3D%207.6-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/mocha-bundle-ui.svg)](https://badge.fury.io/js/mocha-bundle-ui)
 [![Coverage Status](https://coveralls.io/repos/github/Lakitna/Mocha-bundle-ui/badge.svg?branch=master)](https://coveralls.io/github/Lakitna/Mocha-bundle-ui?branch=master)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FLakitna%2FMocha-bundle-ui.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FLakitna%2FMocha-bundle-ui?ref=badge_shield)
 
 Add `bundle` to [another UI](#supported-uis). `bundle` allows you to bundle tests across files with a before and after scripts that are executed for every bundle.
 
@@ -204,3 +205,7 @@ after
 ```
 
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FLakitna%2FMocha-bundle-ui.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FLakitna%2FMocha-bundle-ui?ref=badge_large)
