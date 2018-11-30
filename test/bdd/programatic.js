@@ -1,29 +1,30 @@
+/* eslint sonarjs/no-identical-functions: "off" */
+/* eslint no-invalid-this: "off" */
+
+const loopLength = 2;
+const loopArray = [];
 
 
-let loopLength = 2;
-let loopArray = [];
-
-
-for(let i=0; i<loopLength; i++) {
+for (let i=0; i<loopLength; i++) {
     loopArray.push(i);
 
-    bundle({ loop: "for" }, function() {
-        let bundleSuite = this;
+    bundle({loop: 'for'}, function() {
+        const bundleSuite = this;
 
-        describe("Loop iteration " + i, function() {
-            it("should have bundled", function() {
+        describe(`Loop iteration ${i}`, function() {
+            it(`should have bundled`, function() {
                 expect(bundleSuite.suites.length).to.equal(loopLength);
             });
         });
     });
 }
 
-loopArray.forEach((val, i) => {
-    bundle({ loop: "ES6 foreach" }, function() {
-        let bundleSuite = this;
+loopArray.forEach((i) => {
+    bundle({loop: 'ES6 foreach'}, function() {
+        const bundleSuite = this;
 
-        describe("Loop iteration " + i, function() {
-            it("should have bundled", function() {
+        describe(`Loop iteration ${i}`, function() {
+            it(`should have bundled`, function() {
                 expect(bundleSuite.suites.length).to.equal(loopLength);
             });
         });
@@ -31,12 +32,12 @@ loopArray.forEach((val, i) => {
 });
 
 
-loopArray.forEach(function(val, i) {
-    bundle({ loop: "foreach" }, function() {
-        let bundleSuite = this;
+loopArray.forEach(function(i) {
+    bundle({loop: 'foreach'}, function() {
+        const bundleSuite = this;
 
-        describe("Loop iteration " + i, function() {
-            it("should have bundled", function() {
+        describe(`Loop iteration ${i}`, function() {
+            it(`should have bundled`, function() {
                 expect(bundleSuite.suites.length).to.equal(loopLength);
             });
         });

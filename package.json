@@ -1,6 +1,6 @@
 {
   "name": "mocha-bundle-ui",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Mocha BDD ui extended with bundle",
   "main": "index.js",
   "repository": {
@@ -8,6 +8,7 @@
     "url": "https://github.com/Lakitna/Mocha-bundle-ui"
   },
   "scripts": {
+    "lint": "eslint ./",
     "test": "nyc --reporter=html --reporter=text-summary node ./test/index.js && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -28,6 +29,10 @@
     "coveralls": "^3.0.2",
     "mocha": "^4.1.0",
     "nyc": "^13.1.0",
-    "recursive-readdir": "^2.2.2"
+    "recursive-readdir": "^2.2.2",
+    "eslint": "^5.9.0",
+    "eslint-config-google": "^0.11.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-sonarjs": "^0.2.0"
   }
 }
