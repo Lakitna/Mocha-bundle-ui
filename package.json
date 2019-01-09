@@ -9,7 +9,6 @@
   },
   "scripts": {
     "lint": "eslint ./",
-    "dev": "mocha -r ./index.js -r chai/register-expect --ui bdd-bundle",
     "test": "nyc --reporter=html --reporter=text-summary node ./test/index.js && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [

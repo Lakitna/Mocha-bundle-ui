@@ -113,6 +113,5 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         return bundle;
     }
 
-
     return ret;
 };
