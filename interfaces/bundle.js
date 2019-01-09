@@ -1,11 +1,11 @@
 const utils = require('../include/utils');
 
 /* istanbul ignore next: Empty function doesn't need test */
-let beforeEachBundleFunction = function(_, done) {
+let beforeEachBundleFunction = function(done) {
     done();
 };
 /* istanbul ignore next: Empty function doesn't need test */
-let afterEachBundleFunction = function(_, done) {
+let afterEachBundleFunction = function(done) {
     done();
 };
 
@@ -36,7 +36,9 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         for (let i=0; i < bundleContext.suites.length; i++) {
             const suite = bundleContext.suites[i];
 
-            if (suite.params && utils.objectEquals(suite.params, parameters)) {
+            if (suite.parameters
+                && utils.objectEquals(suite.parameters, parameters)
+            ) {
                 suites.unshift(suite);
                 fn.call(suite);
                 suites.shift(suite);
@@ -54,6 +56,11 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Set the function to run before each bundle
      * @param {function} fn
+     *
+     * @example // BDD-bundle
+     * bundle.beforeEach(function(done) {
+     *     console.log(this.parameters);
+     * });
      */
     ret[setupFnName] = function(fn) {
         beforeEachBundleFunction = fn;
@@ -62,6 +69,11 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Set the function to run after each bundle
      * @param {function} fn
+     *
+     * @example // BDD-bundle
+     * bundle.beforeEach(function(done) {
+     *     console.log(this.parameters);
+     * });
      */
     ret[teardownFnName] = function(fn) {
         afterEachBundleFunction = fn;
@@ -88,14 +100,14 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
             file: file,
             fn: fn,
         });
-        bundle.params = parameters;
+        bundle.parameters = parameters;
 
         bundle.beforeAll('Before bundle', function(done) {
-            beforeEachBundleFunction.call(bundle, parameters, done);
+            beforeEachBundleFunction.call(bundle, done);
         });
 
         bundle.afterAll('After bundle', function(done) {
-            afterEachBundleFunction.call(bundle, parameters, done);
+            afterEachBundleFunction.call(bundle, done);
         });
 
         return bundle;

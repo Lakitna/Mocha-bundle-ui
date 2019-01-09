@@ -9,6 +9,7 @@
   },
   "scripts": {
     "lint": "eslint ./",
+    "dev": "mocha -r ./index.js -r chai/register-expect --ui bdd-bundle",
     "test": "nyc --reporter=html --reporter=text-summary node ./test/index.js && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -27,12 +28,12 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
-    "mocha": "^4.1.0",
-    "nyc": "^13.1.0",
-    "recursive-readdir": "^2.2.2",
     "eslint": "^5.9.0",
     "eslint-config-google": "^0.11.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-sonarjs": "^0.2.0"
+    "eslint-plugin-sonarjs": "^0.2.0",
+    "mocha": "^4.1.0",
+    "nyc": "^13.1.0",
+    "recursive-readdir": "^2.2.2"
   }
 }

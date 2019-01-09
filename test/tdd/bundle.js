@@ -16,7 +16,7 @@ bundle({nesting: 'base'}, function() {
         suite('A nested bundle should be a child of the first bundle', function() {
             test('this.parent is another bundle', function() {
                 expect(bundleSuite.parent.root).to.be.false;
-                expect(bundleSuite.parent.params).to.eql({nesting: 'base'});
+                expect(bundleSuite.parent.parameters).to.eql({nesting: 'base'});
             });
         });
     });
@@ -37,9 +37,9 @@ bundle({nesting: 'base'}, function() {
         suite('A second nested bundle should be a sibling of the first nested bundle', function() {
             test('its sibling is the bundle defined on the same level', function() {
                 bundleSuite.parent.suites.forEach((bun) => {
-                    if (typeof bun.params !== 'undefined') {
-                        expect(JSON.stringify(bun.params)).to.be.oneOf([
-                            JSON.stringify(bundleSuite.params),
+                    if (typeof bun.parameters !== 'undefined') {
+                        expect(JSON.stringify(bun.parameters)).to.be.oneOf([
+                            JSON.stringify(bundleSuite.parameters),
                             JSON.stringify({nesting: 'One'}),
                         ]);
                     }

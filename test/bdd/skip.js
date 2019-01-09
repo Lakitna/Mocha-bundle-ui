@@ -12,3 +12,9 @@ bundle({behaviour: 'default'}, function() {
         });
     });
 });
+
+bundle.skip({behaviour: 'skip'}, function() {
+    it('skips', function() {
+        expect(true).to.be.false;
+    });
+});
