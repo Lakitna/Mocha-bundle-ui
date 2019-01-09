@@ -60,13 +60,13 @@ The Mocha default UI. This UI is fully supported.
 ```
 
 ```javascript
-bundle.beforeEach(function(parameters, done) {
-    // Do some setup using the parameters as input
+bundle.beforeEach(function(done) {
+    // Do some setup using this.parameters as input
     done();
 });
 
-bundle.afterEach(function(parameters, done) {
-    // Do some teardown using the parameters as input
+bundle.afterEach(function(done) {
+    // Do some teardown using this.parameters as input
     done();
 });
 
@@ -87,13 +87,13 @@ Another popular Mocha UI. This UI is fully supported.
 ```
 
 ```javascript
-bundle.setup(function(parameters, done) {
-    // Do some setup using the parameters as input
+bundle.setup(function(done) {
+    // Do some setup using this.parameters as input
     done();
 });
 
-bundle.teardown(function(parameters, done) {
-    // Do some teardown using the parameters as input
+bundle.teardown(function(done) {
+    // Do some teardown using this.parameters as input
     done();
 });
 
@@ -166,18 +166,18 @@ Result:
 Custom behaviour based on a specific bundle should be accomplished by using the bundle parameters.
 
 ```javascript
-bundle.beforeEach(function(parameters, done) {
-    // Do some setup using the parameters as input
+bundle.beforeEach(function(done) {
+    // Do some setup using this.parameters as input
     console.log('before');
-    console.log(parameters);
+    console.log(this.parameters);
 
     done(); // Done must be called, see mocha-bundle-ui limits
 });
 
-bundle.afterEach(function(parameters, done) {
-    // Do some teardown using the parameters as input
+bundle.afterEach(function(done) {
+    // Do some teardown using this.parameters as input
     console.log('after');
-    console.log(parameters);
+    console.log(this.parameters);
 
     done(); // Done must be called, see mocha-bundle-ui limits
 });
