@@ -91,11 +91,11 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         bundle.params = parameters;
 
         bundle.beforeAll('Before bundle', function(done) {
-            beforeEachBundleFunction(parameters, done);
+            beforeEachBundleFunction.call(bundle, parameters, done);
         });
 
         bundle.afterAll('After bundle', function(done) {
-            afterEachBundleFunction(parameters, done);
+            afterEachBundleFunction.call(bundle, parameters, done);
         });
 
         return bundle;
