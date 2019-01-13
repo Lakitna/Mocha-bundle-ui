@@ -1,5 +1,5 @@
 const utils = require('../include/utils');
-const BundleError = require('../include/bundleError')
+const BundleError = require('../include/bundleError');
 
 /* istanbul ignore next: Empty function doesn't need test */
 let beforeEachBundleFunction = function(done) {
