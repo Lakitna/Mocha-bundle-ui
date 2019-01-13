@@ -24,7 +24,7 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Describe a 'suite' with given `parameters` to bundle on
      * and a callback `fn` containing nested suites and/or tests.
-     * @param {object} parameters - Bundle parameters
+     * @param {object|string} parameters - Bundle parameters
      * @param {function} fn - Callback function
      */
     const ret = function bundle(parameters, fn) {
@@ -37,7 +37,7 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
             const suite = bundleContext.suites[i];
 
             if (suite.parameters
-                && utils.objectEquals(suite.parameters, parameters)
+                && utils.objectEquals(suite.parameters, bundle.parameters)
             ) {
                 suites.unshift(suite);
                 fn.call(suite);
@@ -88,18 +88,15 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      * @return {Suite}
      */
     function createBundle(parameters, fn) {
-        let description = 'Bundle with parameters:';
-        for (const key in parameters) {
-            if (key) {
-                description += ` ${key} = ${parameters[key]} &`;
-            }
-        }
-
         const bundle = common.suite.create({
-            title: description.replace(/\s+\&$/, ''),
+            title: createDescription(parameters),
             file: file,
             fn: fn,
         });
+
+        if (typeof parameters == 'string') {
+            parameters = {string: parameters};
+        }
         bundle.parameters = parameters;
 
         bundle.beforeAll('Before bundle', function(done) {
@@ -115,3 +112,26 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
 
     return ret;
 };
+
+
+/**
+ * @param {object|string} parameters
+ * @return {string}
+ */
+function createDescription(parameters) {
+    if (typeof parameters == 'object') {
+        let description = 'Bundle with parameters:';
+        for (const key in parameters) {
+            if (key) {
+                description += ` ${key} = ${parameters[key]} &`;
+            }
+        }
+        return description.replace(/\s+\&$/, '');
+    }
+    else if (typeof parameters == 'string') {
+        return `Bundle: ${parameters}`;
+    }
+
+    throw new Error('Bundle parameters of invalid type ' + typeof parameters
+        + '. Expected an object or a string.');
+}
