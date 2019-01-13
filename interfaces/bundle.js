@@ -1,4 +1,5 @@
 const utils = require('../include/utils');
+const BundleError = require('../include/bundleError')
 
 /* istanbul ignore next: Empty function doesn't need test */
 let beforeEachBundleFunction = function(done) {
@@ -132,6 +133,7 @@ function createDescription(parameters) {
         return `Bundle: ${parameters}`;
     }
 
-    throw new Error('Bundle parameters of invalid type ' + typeof parameters
-        + '. Expected an object or a string.');
+    throw new BundleError('Bundle parameters are of invalid type '
+        + `'${typeof parameters}'. `
+        + 'Expected an object or a string.');
 }
