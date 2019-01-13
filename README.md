@@ -37,12 +37,13 @@ npm install mocha-bundle-ui
 Then specify the UI by calling mocha with the `--ui` flag
 
 ```shell
-mocha --ui BDD-bundle
+mocha --require mocha-bundle-ui --ui BDD-bundle
 ```
 
 Or add the following line to `mocha.opts`
 
 ```shell
+--require mocha-bundle-ui
 --ui BDD-bundle
 ```
 
@@ -202,5 +203,3 @@ before
 after
 { foo: 'bar' }
 ```
-
-
