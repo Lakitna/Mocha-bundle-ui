@@ -1,4 +1,4 @@
-const utils = require('../include/utils');
+const objectEquals = require('../include/utils').objectEquals;
 const BundleError = require('../include/bundleError');
 
 /* istanbul ignore next: Empty function doesn't need test */
@@ -30,27 +30,15 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      */
     const ret = function bundle(parameters, fn) {
         const bundle = createBundle(parameters, fn);
-        const bundleContext = bundle.parent;
-        bundleContext.suites.pop();
+        const context = bundle.parent;
+        context.suites.pop();
 
-        let foundExisting = false;
-        for (let i=0; i < bundleContext.suites.length; i++) {
-            const suite = bundleContext.suites[i];
-
-            if (suite.parameters
-                && utils.objectEquals(suite.parameters, bundle.parameters)
-            ) {
-                suites.unshift(suite);
-                fn.call(suite);
-                suites.shift(suite);
-
-                foundExisting = true;
-                break;
-            }
+        const existingBundle = findBundleInContext(bundle, context);
+        if (existingBundle) {
+            updateBundle(existingBundle, fn);
         }
-
-        if (!foundExisting) {
-            bundleContext.suites.push(bundle);
+        else {
+            context.suites.push(bundle);
         }
     };
 
@@ -83,22 +71,25 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
 
     /**
      * Create a new bundle
-     * @param {object} parameters - Bundle parameters
+     * @param {object|string} parameters - Bundle parameters
      * @param {function} fn - Callback function
      *
      * @return {Suite}
      */
     function createBundle(parameters, fn) {
         const bundle = common.suite.create({
-            title: createDescription(parameters),
+            title: createTitle(parameters),
             file: file,
             fn: fn,
         });
+
+        bundle.files = [file];
 
         if (typeof parameters == 'string') {
             parameters = {string: parameters};
         }
         bundle.parameters = parameters;
+
 
         bundle.beforeAll('Before bundle', function(done) {
             beforeEachBundleFunction.call(bundle, done);
@@ -111,19 +102,59 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         return bundle;
     }
 
+    /**
+     * Update an existing bundle by merging the new one into it.
+     * @param {Suite} bundle
+     * @param {function} fn - Callback function
+     */
+    function updateBundle(bundle, fn) {
+        suites.unshift(bundle);
+
+        if (!bundle.files.includes(file)) {
+            bundle.files.push(file);
+            bundle.file = bundle.files.join(',');
+        }
+        fn.call(bundle);
+
+        suites.shift(bundle);
+    }
+
     return ret;
 };
 
 
 /**
+ * Find an existing bundle inside the direct context of the new one
+ * compairing on parameters. Return the first matching bundle.
+ * @param {Suite} bundle
+ * @param {Suite} context the suite containing bundle
+ *
+ * @return {Suite|false}
+ */
+function findBundleInContext(bundle, context) {
+    for (let i=0; i<context.suites.length; i++) {
+        const suite = context.suites[i];
+
+        if (suite.parameters
+                && objectEquals(suite.parameters, bundle.parameters)) {
+            return suite;
+        }
+    }
+
+    return false;
+}
+
+
+/**
  * @param {object|string} parameters
+ *
  * @return {string}
  */
-function createDescription(parameters) {
+function createTitle(parameters) {
     if (typeof parameters == 'object') {
         let description = 'Bundle with parameters:';
         for (const key in parameters) {
-            if (key) {
+            if (parameters.hasOwnProperty(key)) {
                 description += ` ${key} = ${parameters[key]} &`;
             }
         }
@@ -135,5 +166,5 @@ function createDescription(parameters) {
 
     throw new BundleError('Bundle parameters are of invalid type '
         + `'${typeof parameters}'. `
-        + 'Expected an object or a string.');
+        + 'Expected an Object or a string.');
 }

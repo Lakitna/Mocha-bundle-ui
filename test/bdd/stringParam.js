@@ -26,7 +26,7 @@ describe('Bundles take an object or a string as parameters', function() {
             bundle(123, function() {});
         };
         const error = 'Bundle parameters are of invalid type \'number\'. '
-            + 'Expected an object or a string.';
+            + 'Expected an Object or a string.';
 
         expect(fn).to.throw(error);
     });
