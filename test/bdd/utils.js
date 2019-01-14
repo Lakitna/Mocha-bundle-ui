@@ -3,6 +3,38 @@ const utils = require('../../include/utils');
 
 describe('Utility functions', function() {
     describe('objectEquals', function() {
+        describe('recursive', function() {
+            it('does not match objects with a change deeper in the object', function() {
+                const a = {
+                    foo: {
+                        bar: {value: 12},
+                    },
+                };
+                const b = {
+                    foo: {
+                        bar: {value: 1},
+                    },
+                };
+
+                expect(utils.objectEquals(a, b)).to.be.false;
+            });
+
+            it('matches equal deep objects', function() {
+                const a = {
+                    foo: {
+                        bar: {value: 12},
+                    },
+                };
+                const b = {
+                    foo: {
+                        bar: {value: 12},
+                    },
+                };
+
+                expect(utils.objectEquals(a, b)).to.be.true;
+            });
+        });
+
         it('should return true for equal simple JSON compatible objects', function() {
             const a = {
                 foo: 'bar',
