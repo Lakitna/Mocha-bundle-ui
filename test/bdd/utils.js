@@ -35,6 +35,29 @@ describe('Utility functions', function() {
             });
         });
 
+        it('returns false when an object is null', function() {
+            const a = null;
+            const b = {
+                foo: 'bar',
+            };
+
+            expect(utils.objectEquals(a, b)).to.be.false;
+        });
+
+        it('returns false when it contains arrays of different lengths', function() {
+            const a = [0];
+            const b = [0, 1];
+
+            expect(utils.objectEquals(a, b)).to.be.false;
+        });
+
+        it('returns false for different dates', function() {
+            const a = new Date(10);
+            const b = new Date(8);
+
+            expect(utils.objectEquals(a, b)).to.be.false;
+        });
+
         it('should return true for equal simple JSON compatible objects', function() {
             const a = {
                 foo: 'bar',

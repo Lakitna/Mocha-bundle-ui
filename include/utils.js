@@ -10,10 +10,6 @@ exports.objectEquals = function objectEquals(x, y) {
         return x === y;
     }
 
-    // after this just checking type of one would be enough
-    if (x.constructor !== y.constructor) {
-        return false;
-    }
     // if they are functions or RegExp, they should exactly refer to same one
     if (x instanceof Function || x instanceof RegExp) {
         return x === y;
