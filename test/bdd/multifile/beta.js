@@ -1,5 +1,3 @@
-
-
 bundle({multi: 'across files'}, function() {
     const bundleSuite = this;
 

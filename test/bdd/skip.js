@@ -1,4 +1,3 @@
-
 bundle({behaviour: 'default'}, function() {
     describe.skip('A skipped suite', function() {
         it('should be skipped', function() {

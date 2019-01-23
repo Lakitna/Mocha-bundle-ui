@@ -1,5 +1,6 @@
-const utils = require('../include/utils');
+const objectEquals = require('../include/utils').objectEquals;
 const BundleError = require('../include/bundleError');
+
 
 /* istanbul ignore next: Empty function doesn't need test */
 let beforeEachBundleFunction = function(done) {
@@ -28,29 +29,19 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      * @param {object|string} parameters - Bundle parameters
      * @param {function} fn - Callback function
      */
-    const ret = function bundle(parameters, fn) {
-        const bundle = createBundle(parameters, fn);
-        const bundleContext = bundle.parent;
-        bundleContext.suites.pop();
+    const returnObject = function bundle(parameters, fn) {
+        parameters = enrichParameters(parameters);
 
-        let foundExisting = false;
-        for (let i=0; i < bundleContext.suites.length; i++) {
-            const suite = bundleContext.suites[i];
+        // Creating a bundle automatically adds it to the parent suite (context)
+        const bundle = createBundleSuite(parameters, fn);
+        const context = bundle.parent;
 
-            if (suite.parameters
-                && utils.objectEquals(suite.parameters, bundle.parameters)
-            ) {
-                suites.unshift(suite);
-                fn.call(suite);
-                suites.shift(suite);
-
-                foundExisting = true;
-                break;
-            }
-        }
-
-        if (!foundExisting) {
-            bundleContext.suites.push(bundle);
+        const existingBundle = findBundleInContext(parameters, context);
+        if (existingBundle) {
+            // Remove newly made, duplicate bundle from the context
+            context.suites.pop();
+            // Add bundle contents to the existing bundle suite
+            updateBundle(existingBundle, fn);
         }
     };
 
@@ -63,7 +54,7 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      *     console.log(this.parameters);
      * });
      */
-    ret[setupFnName] = function(fn) {
+    returnObject[setupFnName] = function(fn) {
         beforeEachBundleFunction = fn;
     };
 
@@ -76,28 +67,26 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      *     console.log(this.parameters);
      * });
      */
-    ret[teardownFnName] = function(fn) {
+    returnObject[teardownFnName] = function(fn) {
         afterEachBundleFunction = fn;
     };
 
 
     /**
-     * Create a new bundle
+     * Create a new bundle suite
      * @param {object} parameters - Bundle parameters
      * @param {function} fn - Callback function
      *
      * @return {Suite}
      */
-    function createBundle(parameters, fn) {
+    function createBundleSuite(parameters, fn) {
         const bundle = common.suite.create({
-            title: createDescription(parameters),
+            title: createTitle(parameters),
             file: file,
             fn: fn,
         });
 
-        if (typeof parameters == 'string') {
-            parameters = {string: parameters};
-        }
+        bundle.files = [file];
         bundle.parameters = parameters;
 
         bundle.beforeAll('Before bundle', function(done) {
@@ -111,29 +100,82 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         return bundle;
     }
 
-    return ret;
+    /**
+     * Update an existing bundle by merging the new one into it.
+     * @param {Suite} bundle
+     * @param {function} fn - Callback function
+     */
+    function updateBundle(bundle, fn) {
+        suites.unshift(bundle);
+
+        if (!bundle.files.includes(file)) {
+            bundle.files.push(file);
+            bundle.file = bundle.files.join(',');
+        }
+        fn.call(bundle);
+
+        suites.shift(bundle);
+    }
+
+    return returnObject;
 };
 
 
 /**
- * @param {object|string} parameters
+ * Find an existing bundle inside the direct context of the new one compairing
+ * on parameters. Returns undefined if no existing bundle is found.
+ * @param {object} parameters - Bundle parameters
+ * @param {Suite} context the suite containing bundle
+ *
+ * @return {Suite|undefined}
+ */
+function findBundleInContext(parameters, context) {
+    return context.suites.find((suite, i) => {
+        const parameterMatch = objectEquals(suite.parameters, parameters);
+        const isLastSuite = (i == context.suites.length - 1);
+
+        return suite.parameters && parameterMatch && !isLastSuite;
+    });
+}
+
+
+/**
+ * Create a bundle title based on parameters
+ * @param {object} parameters
+ *
  * @return {string}
  */
-function createDescription(parameters) {
-    if (typeof parameters == 'object') {
-        let description = 'Bundle with parameters:';
-        for (const key in parameters) {
-            if (key) {
-                description += ` ${key} = ${parameters[key]} &`;
-            }
-        }
-        return description.replace(/\s+\&$/, '');
+function createTitle(parameters) {
+    if (parameters.description) {
+        return `Bundle: ${parameters.description}`;
     }
-    else if (typeof parameters == 'string') {
-        return `Bundle: ${parameters}`;
+
+    let description = 'Bundle with parameters:';
+    for (const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+            description += ` ${key} = ${parameters[key]} &`;
+        }
+    }
+    return description.replace(/\s+\&$/, '');
+}
+
+
+/**
+ * Enrich parameters
+ * @param {object|string} parameters
+ *
+ * @return {object}
+ * @throws {BundleError} If parameter is unsupported
+ */
+function enrichParameters(parameters) {
+    if (typeof parameters === 'object') {
+        return parameters;
+    }
+    if (typeof parameters === 'string') {
+        return {description: parameters};
     }
 
     throw new BundleError('Bundle parameters are of invalid type '
         + `'${typeof parameters}'. `
-        + 'Expected an object or a string.');
+        + 'Expected an Object or a string.');
 }

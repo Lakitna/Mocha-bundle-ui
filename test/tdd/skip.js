@@ -1,4 +1,3 @@
-
 bundle({behaviour: 'default'}, function() {
     suite.skip('A skipped suite', function() {
         test('should be skipped', function() {
