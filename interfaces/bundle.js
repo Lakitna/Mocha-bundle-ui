@@ -149,19 +149,17 @@ function findBundleInContext(parameters, context) {
  * @return {string}
  */
 function createTitle(parameters) {
-    if (typeof parameters == 'object') {
-        if (parameters.description) {
-            return `Bundle: ${parameters.description}`;
-        }
-
-        let description = 'Bundle with parameters:';
-        for (const key in parameters) {
-            if (parameters.hasOwnProperty(key)) {
-                description += ` ${key} = ${parameters[key]} &`;
-            }
-        }
-        return description.replace(/\s+\&$/, '');
+    if (parameters.description) {
+        return `Bundle: ${parameters.description}`;
     }
+
+    let description = 'Bundle with parameters:';
+    for (const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+            description += ` ${key} = ${parameters[key]} &`;
+        }
+    }
+    return description.replace(/\s+\&$/, '');
 }
 
 
