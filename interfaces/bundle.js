@@ -36,18 +36,12 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         const bundle = createBundleSuite(parameters, fn);
         const context = bundle.parent;
 
-        // Remove newly made bundle from the context until we find out if
-        // there's an existing suite it should be bundled on.
-        context.suites.pop();
-
         const existingBundle = findBundleInContext(parameters, context);
         if (existingBundle) {
+            // Remove newly made, duplicate bundle from the context
+            context.suites.pop();
             // Add bundle contents to the existing bundle suite
             updateBundle(existingBundle, fn);
-        }
-        else {
-            // Add the bundle back onto the context
-            context.suites.push(bundle);
         }
     };
 
@@ -136,8 +130,11 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
  * @return {Suite|undefined}
  */
 function findBundleInContext(parameters, context) {
-    return context.suites.find((suite) => {
-        return suite.parameters && objectEquals(suite.parameters, parameters);
+    return context.suites.find((suite, i) => {
+        const parameterMatch = objectEquals(suite.parameters, parameters);
+        const isLastSuite = (i == context.suites.length - 1);
+
+        return suite.parameters && parameterMatch && !isLastSuite;
     });
 }
 
