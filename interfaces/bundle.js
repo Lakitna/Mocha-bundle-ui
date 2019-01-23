@@ -1,11 +1,12 @@
 const utils = require('../include/utils');
+const BundleError = require('../include/bundleError');
 
 /* istanbul ignore next: Empty function doesn't need test */
-let beforeEachBundleFunction = function(_, done) {
+let beforeEachBundleFunction = function(done) {
     done();
 };
 /* istanbul ignore next: Empty function doesn't need test */
-let afterEachBundleFunction = function(_, done) {
+let afterEachBundleFunction = function(done) {
     done();
 };
 
@@ -24,7 +25,7 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Describe a 'suite' with given `parameters` to bundle on
      * and a callback `fn` containing nested suites and/or tests.
-     * @param {object} parameters - Bundle parameters
+     * @param {object|string} parameters - Bundle parameters
      * @param {function} fn - Callback function
      */
     const ret = function bundle(parameters, fn) {
@@ -36,7 +37,9 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
         for (let i=0; i < bundleContext.suites.length; i++) {
             const suite = bundleContext.suites[i];
 
-            if (suite.params && utils.objectEquals(suite.params, parameters)) {
+            if (suite.parameters
+                && utils.objectEquals(suite.parameters, bundle.parameters)
+            ) {
                 suites.unshift(suite);
                 fn.call(suite);
                 suites.shift(suite);
@@ -54,6 +57,11 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Set the function to run before each bundle
      * @param {function} fn
+     *
+     * @example // BDD-bundle
+     * bundle.beforeEach(function(done) {
+     *     console.log(this.parameters);
+     * });
      */
     ret[setupFnName] = function(fn) {
         beforeEachBundleFunction = fn;
@@ -62,6 +70,11 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Set the function to run after each bundle
      * @param {function} fn
+     *
+     * @example // BDD-bundle
+     * bundle.beforeEach(function(done) {
+     *     console.log(this.parameters);
+     * });
      */
     ret[teardownFnName] = function(fn) {
         afterEachBundleFunction = fn;
@@ -76,31 +89,51 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      * @return {Suite}
      */
     function createBundle(parameters, fn) {
+        const bundle = common.suite.create({
+            title: createDescription(parameters),
+            file: file,
+            fn: fn,
+        });
+
+        if (typeof parameters == 'string') {
+            parameters = {string: parameters};
+        }
+        bundle.parameters = parameters;
+
+        bundle.beforeAll('Before bundle', function(done) {
+            beforeEachBundleFunction.call(bundle, done);
+        });
+
+        bundle.afterAll('After bundle', function(done) {
+            afterEachBundleFunction.call(bundle, done);
+        });
+
+        return bundle;
+    }
+
+    return ret;
+};
+
+
+/**
+ * @param {object|string} parameters
+ * @return {string}
+ */
+function createDescription(parameters) {
+    if (typeof parameters == 'object') {
         let description = 'Bundle with parameters:';
         for (const key in parameters) {
             if (key) {
                 description += ` ${key} = ${parameters[key]} &`;
             }
         }
-
-        const bundle = common.suite.create({
-            title: description.replace(/\s+\&$/, ''),
-            file: file,
-            fn: fn,
-        });
-        bundle.params = parameters;
-
-        bundle.beforeAll('Before bundle', function(done) {
-            beforeEachBundleFunction(parameters, done);
-        });
-
-        bundle.afterAll('After bundle', function(done) {
-            afterEachBundleFunction(parameters, done);
-        });
-
-        return bundle;
+        return description.replace(/\s+\&$/, '');
+    }
+    else if (typeof parameters == 'string') {
+        return `Bundle: ${parameters}`;
     }
 
-
-    return ret;
-};
+    throw new BundleError('Bundle parameters are of invalid type '
+        + `'${typeof parameters}'. `
+        + 'Expected an object or a string.');
+}

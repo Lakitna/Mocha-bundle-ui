@@ -8,25 +8,36 @@ Add `bundle` to [another UI](#supported-uis). `bundle` allows you to bundle test
 
 This UI was originally made to use with E2E frontend testing frameworks that use Mocha. In this context the UI allows you to _separate speed optimizations from your file structure_ resulting in more flexibility with a minimum runtime.
 
+## Contents
+- [Design choices](#design-choices)
+- [Installation](#installation)
+- [Supported UIs](#supported-uis)
+- [Examples](#examples)
+
+----------
+
 ## Design choices
 
 ### Bundles work across files
 This is the main purpose of the UI. This allows you to separate technical arrangement from your administrative logic.
 
-### Bundles take an object to bundle on
-To enable bundling each bundle needs an id. By making this id into an object it can double as input for the `bundle.beforeEach` and `bundle.afterEach` functions. This allows you to customise the before and after scripts to suit each bundles contents.
+### You can bundle on objects
+To enable bundling each bundle needs an id. By making this id into an object it can double as input for the `bundle.beforeEach` and `bundle.afterEach` functions. This allows you to customise the before and after scripts to suit each bundle.
 
 ### Bundles only work within their nesting level
 Bundling on different nesting levels can be confusing and can thus lead to accidental bundling. To keep things clean and clear bundling across nesting levels is not possible.
+
+### Bundles don't support `.skip` and `.only`
+Bundles themselves don't support this, but its contents do. Enabling this would get very confusing very fast as it would have effect on multiple files.
 
 ## Limits
 As with everything there are limits, below are the ones identified right now that aren't because of a design choice. If you need any of these limits removed, please feel free to add an issue or a pull request with the solution.
 
 * There are no default bundle values.
-* Bundles themselves don't support `.skip` and `.only`, but its contents do.
 * Bundle setup and teardown functions only work with Mocha async (requires `done()` to be called).
 * `bundle` can only be used in combination with the [Supported UIs](#supported-uis)
 
+----------
 
 ## Installation
 
@@ -34,18 +45,20 @@ As with everything there are limits, below are the ones identified right now tha
 npm install mocha-bundle-ui
 ```
 
-Then specify the UI by calling mocha with the `--ui` flag
+Then require & specify the UI by calling mocha with the `--require` & `--ui` flags:
 
 ```shell
-mocha --ui BDD-bundle
+mocha --require mocha-bundle-ui --ui BDD-bundle
 ```
 
-Or add the following line to `mocha.opts`
+You can also add these flags to `mocha.opts`:
 
 ```shell
+--require mocha-bundle-ui
 --ui BDD-bundle
 ```
 
+----------
 
 ## Supported UIs
 Mocha bundle UI is an extention of existing UIs. The following are supported at this point.
@@ -60,13 +73,13 @@ The Mocha default UI. This UI is fully supported.
 ```
 
 ```javascript
-bundle.beforeEach(function(parameters, done) {
-    // Do some setup using the parameters as input
+bundle.beforeEach(function(done) {
+    // Do some setup using this.parameters as input
     done();
 });
 
-bundle.afterEach(function(parameters, done) {
-    // Do some teardown using the parameters as input
+bundle.afterEach(function(done) {
+    // Do some teardown using this.parameters as input
     done();
 });
 
@@ -87,13 +100,13 @@ Another popular Mocha UI. This UI is fully supported.
 ```
 
 ```javascript
-bundle.setup(function(parameters, done) {
-    // Do some setup using the parameters as input
+bundle.setup(function(done) {
+    // Do some setup using this.parameters as input
     done();
 });
 
-bundle.teardown(function(parameters, done) {
-    // Do some teardown using the parameters as input
+bundle.teardown(function(done) {
+    // Do some teardown using this.parameters as input
     done();
 });
 
@@ -106,11 +119,33 @@ bundle({ foo: 'bar' }, function() {
 });
 ```
 
+----------
 
 ## Examples
 Below are some basic examples of using `bundle` using the `BDD-bundle` UI.
 
 ### Minimal
+
+#### Using a string
+```javascript
+bundle('Lorum ipsum', function() {
+    describe('An amazing test description', function() {
+        it('is an amazing', function() {
+            // ...
+        });
+    });
+});
+```
+
+Result:
+
+```
+  Bundle: Lorum ipsum
+    An amazing test description
+      ✓ is amazing
+```
+
+#### Using an object
 ```javascript
 bundle({ foo: 'bar' }, function() {
     describe('An amazing test description', function() {
@@ -130,7 +165,7 @@ Result:
 ```
 
 ### Bundling
-This behaviour also works across multiple files, but only on the same nesting level.
+The behaviour below also works across multiple files, but only on the same nesting level.
 
 ```javascript
 bundle({ foo: 'bar' }, function() {
@@ -166,18 +201,18 @@ Result:
 Custom behaviour based on a specific bundle should be accomplished by using the bundle parameters.
 
 ```javascript
-bundle.beforeEach(function(parameters, done) {
-    // Do some setup using the parameters as input
+bundle.beforeEach(function(done) {
+    // Do some setup using this.parameters as input
     console.log('before');
-    console.log(parameters);
+    console.log(this.parameters);
 
     done(); // Done must be called, see mocha-bundle-ui limits
 });
 
-bundle.afterEach(function(parameters, done) {
-    // Do some teardown using the parameters as input
+bundle.afterEach(function(done) {
+    // Do some teardown using this.parameters as input
     console.log('after');
-    console.log(parameters);
+    console.log(this.parameters);
 
     done(); // Done must be called, see mocha-bundle-ui limits
 });
@@ -202,5 +237,3 @@ before
 after
 { foo: 'bar' }
 ```
-
-

@@ -4,16 +4,16 @@ const count = {
 };
 
 
-bundle.setup(function(params, done) {
+bundle.setup(function(done) {
     count.before++;
-    expect(params).to.be.an('object');
+    expect(this.parameters).to.be.an('object');
     done();
 });
 
 
-bundle.teardown(function(params, done) {
+bundle.teardown(function(done) {
     count.after++;
-    expect(params).to.be.an('object');
+    expect(this.parameters).to.be.an('object');
     done();
 });
 
