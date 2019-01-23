@@ -1,6 +1,3 @@
-/* eslint sonarjs/no-identical-functions: "off" */
-/* eslint no-invalid-this: "off" */
-
 const loopLength = 2;
 const loopArray = [];
 

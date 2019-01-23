@@ -1,6 +1,3 @@
-/* eslint sonarjs/no-identical-functions: "off" */
-
-
 bundle({nesting: 'base'}, function() {
     const bundleSuite = this;
 

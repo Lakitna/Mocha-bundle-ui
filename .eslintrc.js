@@ -23,13 +23,21 @@ module.exports = {
         "linebreak-style": "off",
         "no-multi-spaces": [
             "error", {
-            "exceptions": {
-                "VariableDeclarator": true,
+                "exceptions": {
+                    "VariableDeclarator": true,
+                }
             }
-        }],
+        ],
         "brace-style": [
             "error",
             "stroustrup",
         ]
     },
+    "overrides": [{
+        "files": ["test/**/*.js"],
+        "rules": {
+            "sonarjs/no-identical-functions": "off",
+            "no-invalid-this": "off",
+        }
+    }],
 };
