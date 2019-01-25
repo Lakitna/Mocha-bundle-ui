@@ -36,6 +36,7 @@ As with everything there are limits, below are the ones identified right now tha
 * There are no default bundle values.
 * Bundle setup and teardown functions only work with Mocha async (requires `done()` to be called).
 * `bundle` can only be used in combination with the [Supported UIs](#supported-uis)
+* Calling `bundle` within it blocks can be unpredictable and will always bundle on the top nesting level.
 
 ----------
 
