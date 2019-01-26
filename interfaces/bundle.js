@@ -32,16 +32,14 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     const returnObject = function bundle(parameters, fn) {
         parameters = enrichParameters(parameters);
 
-        // Creating a bundle automatically adds it to the parent suite (context)
-        const bundle = createBundleSuite(parameters, fn);
-        const context = bundle.parent;
-
-        const existingBundle = findBundleInContext(parameters, context);
+        const existingBundle = findBundleInContext(parameters, suites[0]);
         if (existingBundle) {
-            // Remove newly made, duplicate bundle from the context
-            context.suites.pop();
             // Add bundle contents to the existing bundle suite
-            updateBundle(existingBundle, fn);
+            updateBundleSuite(existingBundle, fn);
+        }
+        else {
+            // Create a new bundle suite
+            createBundleSuite(parameters, fn);
         }
     };
 
@@ -105,7 +103,7 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      * @param {Suite} bundle
      * @param {function} fn - Callback function
      */
-    function updateBundle(bundle, fn) {
+    function updateBundleSuite(bundle, fn) {
         suites.unshift(bundle);
 
         if (!bundle.files.includes(file)) {
@@ -132,9 +130,8 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
 function findBundleInContext(parameters, context) {
     return context.suites.find((suite, i) => {
         const parameterMatch = objectEquals(suite.parameters, parameters);
-        const isLastSuite = (i == context.suites.length - 1);
 
-        return suite.parameters && parameterMatch && !isLastSuite;
+        return suite.parameters && parameterMatch;
     });
 }
 

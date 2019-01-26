@@ -6,7 +6,7 @@
 
 Add `bundle` to [another UI](#supported-uis). `bundle` allows you to bundle tests across files with a before and after scripts that are executed for every bundle.
 
-This UI was originally made to use with E2E frontend testing frameworks that use Mocha. In this context the UI allows you to _separate speed optimizations from your file structure_ resulting in more flexibility with a minimum runtime.
+This UI was originally made to use with E2E testing frameworks that use Mocha. In this context the UI allows you to _separate speed optimizations from your file structure_ resulting in more flexibility with a minimum runtime.
 
 ## Contents
 - [Design choices](#design-choices)
@@ -27,11 +27,13 @@ To enable bundling each bundle needs an id. By making this id into an object it 
 ### Bundles only work within their nesting level
 Bundling on different nesting levels can be confusing and can thus lead to accidental bundling. To keep things clean and clear bundling across nesting levels is not possible.
 
+A notable exception to this rule is calling bundle within a test block. This can be unpredictable but when it works it will always bundle on the top nesting level.
+
 ### Bundles don't support `.skip` and `.only`
-Bundles themselves don't support this, but its contents do. Enabling this would get very confusing very fast as it would have effect on multiple files.
+Bundles themselves don't support this, but its contents do. Enabling this would get very confusing very fast as it would potentially have effect on multiple files.
 
 ## Limits
-As with everything there are limits, below are the ones identified right now that aren't because of a design choice. If you need any of these limits removed, please feel free to add an issue or a pull request with the solution.
+As with everything there are limits, below are the ones identified right now that aren't because of a design choice.
 
 * There are no default bundle values.
 * Bundle setup and teardown functions only work with Mocha async (requires `done()` to be called).
