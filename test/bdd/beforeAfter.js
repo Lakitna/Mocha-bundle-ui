@@ -4,10 +4,9 @@ const count = {
 };
 
 
-bundle.beforeEach(function(done) {
+bundle.beforeEach(function() {
     count.before++;
     expect(this.parameters).to.be.an('object');
-    done();
 });
 
 
