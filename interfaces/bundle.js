@@ -50,10 +50,25 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      * @example // BDD-bundle
      * bundle.beforeEach(function(done) {
      *     console.log(this.parameters);
+     *     done();
+     * });
+     * @example // BDD-bundle
+     * bundle.beforeEach(function() {
+     *     console.log(this.parameters);
      * });
      */
     returnObject[setupFnName] = function(fn) {
-        beforeEachBundleFunction = fn;
+        if (fn.length) {
+            // The function is async
+            beforeEachBundleFunction = fn;
+        }
+        else {
+            // Make sync function behave like async
+            beforeEachBundleFunction = function(done) {
+                fn.call(this);
+                done();
+            };
+        }
     };
 
     /**
@@ -61,12 +76,27 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
      * @param {function} fn
      *
      * @example // BDD-bundle
-     * bundle.beforeEach(function(done) {
+     * bundle.afterEach(function(done) {
+     *     console.log(this.parameters);
+     *     done();
+     * });
+     * @example // BDD-bundle
+     * bundle.afterEach(function() {
      *     console.log(this.parameters);
      * });
      */
     returnObject[teardownFnName] = function(fn) {
-        afterEachBundleFunction = fn;
+        if (fn.length) {
+            // The function is async
+            afterEachBundleFunction = fn;
+        }
+        else {
+            // Make sync function behave like async
+            afterEachBundleFunction = function(done) {
+                fn.call(this);
+                done();
+            };
+        }
     };
 
 
