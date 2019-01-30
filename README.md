@@ -36,7 +36,6 @@ Bundles themselves don't support this, but its contents do. Enabling this would 
 As with everything there are limits, below are the ones identified right now that aren't because of a design choice.
 
 * There are no default bundle values.
-* Bundle setup and teardown functions only work with Mocha async (requires `done()` to be called).
 * `bundle` can only be used in combination with the [Supported UIs](#supported-uis)
 
 ----------
