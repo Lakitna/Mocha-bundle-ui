@@ -4,10 +4,10 @@
 
 This file describes the basic use of the UI `BDD-bundle`
 
-## Table of contents
+## Contents
 
 - [Mocha BDD + bundle](#mocha-bdd--bundle)
-  - [Table of contents](#table-of-contents)
+  - [Contents](#contents)
   - [Installation](#installation)
   - [Examples](#examples)
     - [Bundling on a string](#bundling-on-a-string)

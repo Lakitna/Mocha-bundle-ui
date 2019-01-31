@@ -1,9 +1,11 @@
-# Mocha bundle UI
+<center>
+<h1>Mocha bundle UI</h1>
 
-[![GitHub license](https://img.shields.io/github/license/Lakitna/Mocha-bundle-ui.svg)](https://github.com/Lakitna/Mocha-bundle-ui/blob/master/LICENSE)
-![Node version](https://img.shields.io/badge/Node-%3E%3D%207.6-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/mocha-bundle-ui.svg)](https://badge.fury.io/js/mocha-bundle-ui)
+![Node version](https://img.shields.io/badge/Node-%3E%3D%207.6-brightgreen.svg)
+![Mocha version](https://img.shields.io/badge/Mocha-%3E%3D%204.1.0-brightgreen.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Lakitna/Mocha-bundle-ui/badge.svg?branch=master)](https://coveralls.io/github/Lakitna/Mocha-bundle-ui?branch=master)
+</center>
 
 Adds the `bundle` keyword to an existing UI. `bundle` allows you to bundle tests across files into a single suite with a before and after scripts that are executed for every bundle.
 
@@ -25,10 +27,17 @@ bundle('foo', function() {
 
 ## Contents
 
+- [Contents](#contents)
 - [Design choices](#design-choices)
+  - [Bundles work across files](#bundles-work-across-files)
+  - [You can bundle on objects](#you-can-bundle-on-objects)
+  - [Bundles only work within their nesting level](#bundles-only-work-within-their-nesting-level)
+  - [Bundles don't support `.skip` and `.only`](#bundles-dont-support-skip-and-only)
 - [Limits](#limits)
 - [Installation](#installation)
 - [Supported UIs](#supported-uis)
+  - [Mocha BDD](#mocha-bdd)
+  - [Mocha TDD](#mocha-tdd)
 
 ----------
 
