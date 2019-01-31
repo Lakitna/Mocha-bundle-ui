@@ -1,11 +1,11 @@
-<center>
-<h1>Mocha bundle UI</h1>
+<h1 align="center">Mocha bundle UI</h1>
 
-[![npm version](https://badge.fury.io/js/mocha-bundle-ui.svg)](https://badge.fury.io/js/mocha-bundle-ui)
-![Node version](https://img.shields.io/badge/Node-%3E%3D%207.6-brightgreen.svg)
-![Mocha version](https://img.shields.io/badge/Mocha-%3E%3D%204.1.0-brightgreen.svg)
-[![Coverage Status](https://coveralls.io/repos/github/Lakitna/Mocha-bundle-ui/badge.svg?branch=master)](https://coveralls.io/github/Lakitna/Mocha-bundle-ui?branch=master)
-</center>
+<p align="center">
+<a href="https://badge.fury.io/js/mocha-bundle-ui"><img alt="npm version" src="https://badge.fury.io/js/mocha-bundle-ui.svg"></a>
+<img alt="Node version" src="https://img.shields.io/badge/Node-%3E%3D%207.6-brightgreen.svg">
+<img alt="Mocha version" src="https://img.shields.io/badge/Mocha-%3E%3D%204.1.0-brightgreen.svg">
+<a href="https://coveralls.io/github/Lakitna/Mocha-bundle-ui?branch=master"><img alt="Coverage Status" src="https://coveralls.io/repos/github/Lakitna/Mocha-bundle-ui/badge.svg?branch=master"></a>
+</p>
 
 Adds the `bundle` keyword to an existing UI. `bundle` allows you to bundle tests across files into a single suite with a before and after scripts that are executed for every bundle.
 
