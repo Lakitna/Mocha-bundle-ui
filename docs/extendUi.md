@@ -41,4 +41,4 @@ module.exports = function(suite) {
 
 That's it, easy peasy!
 
-Well it's always for the one who wrote it. If you get stuck please don't hesitate to open an issue.
+Well, it always is for the one who wrote it. If you get stuck please don't hesitate to open an issue.

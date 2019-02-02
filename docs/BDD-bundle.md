@@ -17,13 +17,13 @@ This file describes the basic use of the UI `BDD-bundle`
 
 ## Installation
 
-Require & specify BDD + bundle by calling mocha with the `--require` & `--ui` flags:
+Require & specify BDD + bundle by calling mocha with the `--require` & `--ui` flags
 
 ```shell
 mocha --require mocha-bundle-ui --ui BDD-bundle
 ```
 
-Or add the flags to `mocha.opts`:
+Or add the flags to `mocha.opts`
 
 ```shell
 --require mocha-bundle-ui
@@ -106,7 +106,7 @@ Results in:
 
 Before any bundle is executed the `beforeEach` function is called. This allows you to do some setup before the contents of the bundle are executed. In this function, you have access to the bundle parameters via `this.parameters` and the files that contain parts of the bundle contents via `this.files`.
 
-The `beforeEach` function is shared between all bundles.
+The `beforeEach` function is shared between all bundles and therefore it only has to be set once.
 
 ```javascript
 bundle.beforeEach(function() {
@@ -135,7 +135,7 @@ The value of foo is bar
 
 After a bundle is done executing its contents the `afterEach` function is called. This allows you to do some teardown, finishing up the bundle. In this function, you have access to the bundle parameters via `this.parameters` and the files that contain parts of the bundle contents via `this.files`.
 
-The `afterEach` function is shared between all bundles.
+The `afterEach` function is shared between all bundles and therefore it only has to be set once.
 
 ```javascript
 bundle.afterEach(function() {

@@ -17,13 +17,13 @@ This file describes the basic use of the UI `TDD-bundle`
 
 ## Installation
 
-Require & specify TDD + bundle by calling mocha with the `--require` & `--ui` flags:
+Require & specify TDD + bundle by calling mocha with the `--require` & `--ui` flags
 
 ```shell
 mocha --require mocha-bundle-ui --ui TDD-bundle
 ```
 
-Or add the flags to `mocha.opts`:
+Or add the flags to `mocha.opts`
 
 ```shell
 --require mocha-bundle-ui
@@ -106,7 +106,7 @@ Results in:
 
 Before any bundle is executed the `setup` function is called. This allows you to do some setup before the contents of the bundle are executed. In this function, you have access to the bundle parameters via `this.parameters` and the files that contain parts of the bundle contents via `this.files`.
 
-The `setup` function is shared between all bundles.
+The `setup` function is shared between all bundles and therefore it only has to be set once.
 
 ```javascript
 bundle.setup(function() {
@@ -135,7 +135,7 @@ The value of foo is bar
 
 After a bundle is done executing its contents the `teardown` function is called. This allows you to do some teardown, finishing up the bundle. In this function, you have access to the bundle parameters via `this.parameters` and the files that contain parts of the bundle contents via `this.files`.
 
-The `teardown` function is shared between all bundles.
+The `teardown` function is shared between all bundles and therefore it only has to be set once.
 
 ```javascript
 bundle.teardown(function() {
