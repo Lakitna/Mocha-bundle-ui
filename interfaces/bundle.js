@@ -17,8 +17,8 @@ let afterEachBundleFunction = function(done) {
  * @param {Object} common
  * @param {Array} suites
  * @param {string} file
- * @param {function} setupFnName - Function to run before each bundle
- * @param {function} teardownFnName - Function to run after each bundle
+ * @param {string} setupFnName - Function to run before each bundle
+ * @param {string} teardownFnName - Function to run after each bundle
  *
  * @return {Object}
  */
