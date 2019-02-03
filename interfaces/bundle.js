@@ -1,11 +1,13 @@
-const utils = require('../include/utils');
+const objectEquals = require('../include/utils').objectEquals;
+const BundleError = require('../include/bundleError');
+
 
 /* istanbul ignore next: Empty function doesn't need test */
-let beforeEachBundleFunction = function(_, done) {
+let beforeEachBundleFunction = function(done) {
     done();
 };
 /* istanbul ignore next: Empty function doesn't need test */
-let afterEachBundleFunction = function(_, done) {
+let afterEachBundleFunction = function(done) {
     done();
 };
 
@@ -15,8 +17,8 @@ let afterEachBundleFunction = function(_, done) {
  * @param {Object} common
  * @param {Array} suites
  * @param {string} file
- * @param {function} setupFnName - Function to run before each bundle
- * @param {function} teardownFnName - Function to run after each bundle
+ * @param {string} setupFnName - Function to run before each bundle
+ * @param {string} teardownFnName - Function to run after each bundle
  *
  * @return {Object}
  */
@@ -24,83 +26,183 @@ module.exports = function(common, suites, file, setupFnName, teardownFnName) {
     /**
      * Describe a 'suite' with given `parameters` to bundle on
      * and a callback `fn` containing nested suites and/or tests.
-     * @param {object} parameters - Bundle parameters
+     * @param {object|string} parameters - Bundle parameters
      * @param {function} fn - Callback function
      */
-    const ret = function bundle(parameters, fn) {
-        const bundle = createBundle(parameters, fn);
-        const bundleContext = bundle.parent;
-        bundleContext.suites.pop();
+    const returnObject = function bundle(parameters, fn) {
+        parameters = enrichParameters(parameters);
 
-        let foundExisting = false;
-        for (let i=0; i < bundleContext.suites.length; i++) {
-            const suite = bundleContext.suites[i];
-
-            if (suite.params && utils.objectEquals(suite.params, parameters)) {
-                suites.unshift(suite);
-                fn.call(suite);
-                suites.shift(suite);
-
-                foundExisting = true;
-                break;
-            }
+        const existingBundle = findBundleInContext(parameters, suites[0]);
+        if (existingBundle) {
+            // Add bundle contents to the existing bundle suite
+            updateBundleSuite(existingBundle, fn);
         }
-
-        if (!foundExisting) {
-            bundleContext.suites.push(bundle);
+        else {
+            // Create a new bundle suite
+            createBundleSuite(parameters, fn);
         }
     };
 
     /**
      * Set the function to run before each bundle
      * @param {function} fn
+     *
+     * @example // BDD-bundle
+     * bundle.beforeEach(function(done) {
+     *     console.log(this.parameters);
+     *     done();
+     * });
+     * @example // BDD-bundle
+     * bundle.beforeEach(function() {
+     *     console.log(this.parameters);
+     * });
      */
-    ret[setupFnName] = function(fn) {
-        beforeEachBundleFunction = fn;
+    returnObject[setupFnName] = function(fn) {
+        if (fn.length) {
+            // The function is async
+            beforeEachBundleFunction = fn;
+        }
+        else {
+            // Make sync function behave like async
+            beforeEachBundleFunction = function(done) {
+                fn.call(this);
+                done();
+            };
+        }
     };
 
     /**
      * Set the function to run after each bundle
      * @param {function} fn
+     *
+     * @example // BDD-bundle
+     * bundle.afterEach(function(done) {
+     *     console.log(this.parameters);
+     *     done();
+     * });
+     * @example // BDD-bundle
+     * bundle.afterEach(function() {
+     *     console.log(this.parameters);
+     * });
      */
-    ret[teardownFnName] = function(fn) {
-        afterEachBundleFunction = fn;
+    returnObject[teardownFnName] = function(fn) {
+        if (fn.length) {
+            // The function is async
+            afterEachBundleFunction = fn;
+        }
+        else {
+            // Make sync function behave like async
+            afterEachBundleFunction = function(done) {
+                fn.call(this);
+                done();
+            };
+        }
     };
 
 
     /**
-     * Create a new bundle
+     * Create a new bundle suite
      * @param {object} parameters - Bundle parameters
      * @param {function} fn - Callback function
      *
      * @return {Suite}
      */
-    function createBundle(parameters, fn) {
-        let description = 'Bundle with parameters:';
-        for (const key in parameters) {
-            if (key) {
-                description += ` ${key} = ${parameters[key]} &`;
-            }
-        }
-
+    function createBundleSuite(parameters, fn) {
         const bundle = common.suite.create({
-            title: description.replace(/\s+\&$/, ''),
+            title: createTitle(parameters),
             file: file,
             fn: fn,
         });
-        bundle.params = parameters;
+
+        bundle.files = [file];
+        bundle.parameters = parameters;
 
         bundle.beforeAll('Before bundle', function(done) {
-            beforeEachBundleFunction(parameters, done);
+            beforeEachBundleFunction.call(bundle, done);
         });
 
         bundle.afterAll('After bundle', function(done) {
-            afterEachBundleFunction(parameters, done);
+            afterEachBundleFunction.call(bundle, done);
         });
 
         return bundle;
     }
 
+    /**
+     * Update an existing bundle by merging the new one into it.
+     * @param {Suite} bundle
+     * @param {function} fn - Callback function
+     */
+    function updateBundleSuite(bundle, fn) {
+        suites.unshift(bundle);
 
-    return ret;
+        if (!bundle.files.includes(file)) {
+            bundle.files.push(file);
+            bundle.file = bundle.files.join(',');
+        }
+        fn.call(bundle);
+
+        suites.shift(bundle);
+    }
+
+    return returnObject;
 };
+
+
+/**
+ * Find an existing bundle inside the direct context of the new one compairing
+ * on parameters. Returns undefined if no existing bundle is found.
+ * @param {object} parameters - Bundle parameters
+ * @param {Suite} context the suite containing bundle
+ *
+ * @return {Suite|undefined}
+ */
+function findBundleInContext(parameters, context) {
+    return context.suites.find((suite, i) => {
+        const parameterMatch = objectEquals(suite.parameters, parameters);
+
+        return suite.parameters && parameterMatch;
+    });
+}
+
+
+/**
+ * Create a bundle title based on parameters
+ * @param {object} parameters
+ *
+ * @return {string}
+ */
+function createTitle(parameters) {
+    if (parameters.description) {
+        return `Bundle: ${parameters.description}`;
+    }
+
+    let description = 'Bundle with parameters:';
+    for (const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+            description += ` ${key} = ${parameters[key]} &`;
+        }
+    }
+    return description.replace(/\s+\&$/, '');
+}
+
+
+/**
+ * Enrich parameters
+ * @param {object|string} parameters
+ *
+ * @return {object}
+ * @throws {BundleError} If parameter is unsupported
+ */
+function enrichParameters(parameters) {
+    if (typeof parameters === 'object') {
+        return parameters;
+    }
+    if (typeof parameters === 'string') {
+        return {description: parameters};
+    }
+
+    throw new BundleError('Bundle parameters are of invalid type '
+        + `'${typeof parameters}'. `
+        + 'Expected an Object or a string.');
+}
